@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DulaChem විජාලී</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 15px; background: #f0f7f2; }
+    .card { background: white; padding: 25px; border-radius: 15px; margin-top: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+    .header { background: linear-gradient(135deg, #1a5e2e, #2e7d32); color: white; padding: 30px 20px; text-align: center; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 6px 20px rgba(26, 94, 46, 0.4); }
+    .header h1 { margin: 0; font-size: 42px; letter-spacing: 2px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .header h2 { margin: 8px 0 0 0; font-size: 18px; font-weight: 400; opacity: 0.95; letter-spacing: 1px; }
+    .header p { margin: 15px 0 0 0; font-size: 14px; line-height: 1.6; opacity: 0.9; }
+    input, button { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; box-sizing: border-box; transition: 0.3s; }
+    input:focus { border-color: #1a5e2e; outline: none; box-shadow: 0 0 0 4px rgba(26, 94, 46, 0.1); }
+    button { background: linear-gradient(135deg, #1a5e2e, #2e7d32); color: white; cursor: pointer; font-weight: 700; border: none; font-size: 18px; letter-spacing: 0.5px; }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26, 94, 46, 0.3); }
+    button:active { transform: translateY(0); }
+    button:disabled { background: #888; cursor: not-allowed; transform: none; }
+    #login-section, #app-section { display: none; }
+    .error { color: #d32f2f; font-weight: 600; text-align: center; margin-top: 15px; padding: 10px; background: #ffebee; border-radius: 8px; }
+    .info-box { background: #e8f5e9; padding: 15px; border-radius: 10px; font-size: 15px; margin-bottom: 15px; border-left: 5px solid #1a5e2e; display: flex; justify-content: space-between; font-weight: 600; }
+    textarea { width: 100%; height: 110px; padding: 15px; font-size: 16px; border: 2px solid #e0e0e0; border-radius: 12px; box-sizing: border-box; resize: vertical; outline: none; transition: 0.3s; font-family: inherit; }
+    textarea:focus { border-color: #1a5e2e; box-shadow: 0 0 0 4px rgba(26, 94, 46, 0.1); }
+    #output { white-space: pre-wrap; margin-top: 25px; background: #fafafa; padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0; font-size: 15px; line-height: 1.7; }
+    
+    /* Tap to Start තිරය */
+    #start-screen {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, #1a5e2e 0%, #2e7d32 50%, #43a047 100%);
+      color: white;
+      cursor: pointer;
+      padding: 20px;
+      transition: opacity 0.5s ease;
+    }
+    #start-screen .logo-text {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+      margin-bottom: 10px;
+      animation: fadeInUp 1s ease;
+    }
+    #start-screen .sub-text {
+      font-size: 24px;
+      font-weight: 300;
+      opacity: 0.9;
+      letter-spacing: 2px;
+      margin-bottom: 50px;
+      animation: fadeInUp 1s ease 0.2s both;
+    }
+    #start-screen .tap-btn {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      padding: 18px 45px;
+      border-radius: 50px;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      animation: pulse 2s infinite;
+      backdrop-filter: blur(5px);
+    }
+    #start-screen .tap-btn:hover { background: rgba(255,255,255,0.3); }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+      70% { box-shadow: 0 0 0 25px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #login-section { animation: fadeIn 0.6s ease; }
+  </style>
+</head>
+<body>
+  <!-- ලස්සන Tap to Start තිරය -->
+  <div id="start-screen" onclick="startApp()">
+    <div class="logo-text">විජාලී</div>
+    <div class="sub-text">DulaChem</div>
+    <div class="tap-btn">Tap to Start</div>
+  </div>
+
+  <!-- Login තිරය -->
+  <div id="login-section">
+    <h1 style="color: #1a5e2e; text-align: center; font-size: 32px; margin-bottom: 10px;">🌿 DulaChem විජාලී</h1>
+    <p style="text-align: center; color: #666; margin-bottom: 25px;">Dehydration SOP Assistant</p>
+    <div class="card">
+      <input type="text" id="username" placeholder="Username / පරිශීලක නාමය">
+      <input type="password" id="password" placeholder="Password / මුරපදය">
+      <button onclick="playSound('clickSound'); login()">Login / ලොග් වෙන්න</button>
+      <p id="login-error" class="error"></p>
+    </div>
+  </div>
+
+  <!-- ප්‍රධාන තිරය -->
+  <div id="app-section">
+    <div class="header">
+      <h1>විජාලී</h1>
+      <h2>DulaChem</h2>
+      <p>Eng. Kushan Prasanga<br><span style="font-size: 12px; opacity: 0.8;">CEO / Chief Consulting Engineer</span></p>
+    </div>
+    <div class="card">
+      <div class="info-box">
+        <span><strong>User:</strong> <span id="ui-user">-</span></span>
+        <span><strong>Package:</strong> <span id="ui-package">-</span></span>
+      </div>
+      <div class="info-box">
+        <span><strong>Days Left:</strong> <span id="ui-days">-</span></span>
+        <span><strong>Queries Left:</strong> <span id="ui-queries">-</span></span>
+      </div>
+      
+      <textarea id="question" placeholder="ඔබේ ප්‍රශ්නය මෙතන ලියන්න..."></textarea>
+      <button id="sendBtn" onclick="playSound('clickSound'); askAI()">Get SOP / SOP එක ගන්න</button>
+      <div id="output"></div>
+    </div>
+  </div>
+
+  <script>
+    // ශබ්ද (Sounds)
+    const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+    const successSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+    const errorSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+    function playSound(type) {
+      if (type === 'clickSound') clickSound.play().catch(e => console.log("Sound blocked"));
+      if (type === 'successSound') successSound.play().catch(e => console.log("Sound blocked"));
+      if (type === 'errorSound') errorSound.play().catch(e => console.log("Sound blocked"));
+    }
+
+    // Tap to Start
+    function startApp() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('login-section').style.display = 'block';
+      playSound('clickSound');
+    }
+
+    // Login
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorEl = document.getElementById('login-error');
+      errorEl.innerText = '';
+
+      if (!username || !password) { errorEl.innerText = 'Please enter username and password.'; return; }
+
+      const res = await fetch('/api/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        currentUser = data.user;
+        // වාර ගණන Local Storage එකේ තියන්න (ඉක්මන් වෙන්න)
+        let storedQueries = localStorage.getItem(`queries_${username}`);
+        if (storedQueries) {
+          currentUser.queriesLeft = parseInt(storedQueries);
+        } else {
+          localStorage.setItem(`queries_${username}`, currentUser.queriesLeft);
+        }
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('app-section').style.display = 'block';
+        document.getElementById('ui-user').innerText = currentUser.username;
+        document.getElementById('ui-package').innerText = currentUser.packageType;
+        document.getElementById('ui-days').innerText = currentUser.remainingDays + ' Days';
+        document.getElementById('ui-queries').innerText = currentUser.queriesLeft;
+        playSound('successSound');
+      } else {
+        errorEl.innerText = data.error || 'Login failed.';
+        playSound('errorSound');
+      }
+    }
+
+    let currentUser = null;
+
+    // Ask AI (Fast)
+    async function askAI() {
+      const question = document.getElementById('question').value.trim();
+      const output = document.getElementById('output');
+      const btn = document.getElementById('sendBtn');
+      
+      if (!question) { alert("කරුණාකර ප්‍රශ්නයක් ලියන්න."); return; }
+      if (currentUser.queriesLeft <= 0) { alert("ඔබේ වාර ගණන ඉවරයි."); return; }
+
+      btn.disabled = true; output.innerText = "සකසමින්... ⏳";
+      
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: question, username: currentUser.username })
+        });
+        const data = await res.json();
+        
+        if (data.error) { 
+          output.innerText = "Error: " + data.error; 
+          playSound('errorSound'); 
+        } else { 
+          output.innerText = data.answer; 
+          // වාර ගණන අඩු කරලා Local Storage එකේ සේව් කරන්න
+          currentUser.queriesLeft -= 1;
+          localStorage.setItem(`queries_${currentUser.username}`, currentUser.queriesLeft);
+          document.getElementById('ui-queries').innerText = currentUser.queriesLeft;
+          playSound('successSound'); 
+        }
+      } catch (e) { 
+        output.innerText = "Network error: " + e.message; 
+        playSound('errorSound'); 
+      } finally { 
+        btn.disabled = false; 
+      }
+    }
+  </script>
+</body>
+</html>
