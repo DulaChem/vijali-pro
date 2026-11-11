@@ -145,6 +145,8 @@
       playSound('clickSound');
     }
 
+    let currentUser = null;
+
     // Login
     async function login() {
       const username = document.getElementById('username').value.trim();
@@ -161,13 +163,6 @@
 
       if (data.success) {
         currentUser = data.user;
-        // වාර ගණන Local Storage එකේ තියන්න (ඉක්මන් වෙන්න)
-        let storedQueries = localStorage.getItem(`queries_${username}`);
-        if (storedQueries) {
-          currentUser.queriesLeft = parseInt(storedQueries);
-        } else {
-          localStorage.setItem(`queries_${username}`, currentUser.queriesLeft);
-        }
         document.getElementById('login-section').style.display = 'none';
         document.getElementById('app-section').style.display = 'block';
         document.getElementById('ui-user').innerText = currentUser.username;
@@ -181,16 +176,14 @@
       }
     }
 
-    let currentUser = null;
-
-    // Ask AI (Fast)
+    // Ask AI
     async function askAI() {
       const question = document.getElementById('question').value.trim();
       const output = document.getElementById('output');
       const btn = document.getElementById('sendBtn');
       
       if (!question) { alert("කරුණාකර ප්‍රශ්නයක් ලියන්න."); return; }
-      if (currentUser.queriesLeft <= 0) { alert("ඔබේ වාර ගණන ඉවරයි."); return; }
+      if (currentUser.queriesLeft !== 'Unlimited' && currentUser.queriesLeft <= 0) { alert("ඔබේ වාර ගණන ඉවරයි."); return; }
 
       btn.disabled = true; output.innerText = "සකසමින්... ⏳";
       
@@ -205,10 +198,10 @@
           playSound('errorSound'); 
         } else { 
           output.innerText = data.answer; 
-          // වාර ගණන අඩු කරලා Local Storage එකේ සේව් කරන්න
-          currentUser.queriesLeft -= 1;
-          localStorage.setItem(`queries_${currentUser.username}`, currentUser.queriesLeft);
-          document.getElementById('ui-queries').innerText = currentUser.queriesLeft;
+          if (currentUser.queriesLeft !== 'Unlimited') {
+            currentUser.queriesLeft = data.remainingQueries;
+            document.getElementById('ui-queries').innerText = currentUser.queriesLeft;
+          }
           playSound('successSound'); 
         }
       } catch (e) { 
